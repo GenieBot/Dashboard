@@ -9,9 +9,6 @@ import spark.Session;
 
 public class ConfirmLoginPage extends Page {
 
-    private static final String EMAIL = "admin@example.com";
-    private static final String PASSWORD = "password";
-
     private final Database database;
 
     public ConfirmLoginPage(Database database) {
