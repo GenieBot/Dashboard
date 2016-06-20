@@ -9,11 +9,11 @@ import spark.Response;
 public class IndexPage extends Page {
 
     public IndexPage() {
-        super("/", Method.GET, true);
+        super("/", Method.GET, true, true);
     }
 
     @Override
-    public Object execute(Request request, Response response, Model.Builder builder) {
+    protected Object execute(Request request, Response response, Model.Builder builder) {
         builder.with("name", "Fag lord 03");
         return new ModelAndView(builder.build(), "index.ftl");
     }

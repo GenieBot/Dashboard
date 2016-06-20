@@ -1,0 +1,14 @@
+#internal_data {
+    display: none;
+}
+
+#current_page {
+    display: none;
+}
+
+.alert {
+    display: none;
+    background-color: orange;
+    border: 2px solid darkorange;
+    padding: 7px;
+}

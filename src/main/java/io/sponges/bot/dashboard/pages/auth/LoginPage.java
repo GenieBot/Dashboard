@@ -9,11 +9,16 @@ import spark.Response;
 public class LoginPage extends Page {
 
     public LoginPage() {
-        super("/login", Method.GET, true);
+        super("/login", Method.GET, true, false);
     }
 
     @Override
-    public Object execute(Request request, Response response, Model.Builder builder) {
+    protected Object execute(Request request, Response response, Model.Builder builder) {
+        if (isAuthorised(request.session())) {
+            request.session().attribute("alert", "Already logged in!");
+            response.redirect("/");
+            return null;
+        }
         return new ModelAndView(builder.build(), "login.ftl");
     }
 }

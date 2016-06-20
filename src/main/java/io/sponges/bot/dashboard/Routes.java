@@ -2,10 +2,7 @@ package io.sponges.bot.dashboard;
 
 import freemarker.template.Configuration;
 import io.sponges.bot.dashboard.pages.IndexPage;
-import io.sponges.bot.dashboard.pages.auth.ConfirmLoginPage;
-import io.sponges.bot.dashboard.pages.auth.ConfirmRegistePage;
-import io.sponges.bot.dashboard.pages.auth.LoginPage;
-import io.sponges.bot.dashboard.pages.auth.RegisterPage;
+import io.sponges.bot.dashboard.pages.auth.*;
 import spark.*;
 import spark.template.freemarker.FreeMarkerEngine;
 
@@ -18,7 +15,7 @@ public class Routes {
     private final Service service;
     private final TemplateEngine engine;
 
-    public Routes() throws IOException {
+    public Routes(Database database) throws IOException {
         this.service = Service.ignite();
         this.service.port(4567);
         this.service.staticFileLocation("static");
@@ -34,8 +31,9 @@ public class Routes {
                 // auth
                 new LoginPage(),
                 new RegisterPage(),
-                new ConfirmLoginPage(),
-                new ConfirmRegistePage()
+                new LogoutPage(),
+                new ConfirmLoginPage(database),
+                new ConfirmRegisterPage(database)
         );
     }
 
@@ -52,11 +50,11 @@ public class Routes {
             if (page.isTemplate()) {
                 clazz.getMethod(methodName, String.class, TemplateViewRoute.class, TemplateEngine.class).invoke(service,
                         page.getRoute(), (TemplateViewRoute) (request, response) -> (ModelAndView)
-                                page.execute(request, response, Model.create()), engine);
+                                page.internalExecute(request, response, Model.create()), engine);
             } else {
                 clazz.getMethod(methodName, String.class, Route.class).invoke(service,
                         page.getRoute(), (Route) (request, response) ->
-                                page.execute(request, response, Model.create()));
+                                page.internalExecute(request, response, Model.create()));
             }
         } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
             e.printStackTrace();
