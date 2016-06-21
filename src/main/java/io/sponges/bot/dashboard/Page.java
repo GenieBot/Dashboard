@@ -9,7 +9,7 @@ import java.util.Map;
 
 public abstract class Page {
 
-    protected static final Map<String, String> SESSIONS = new HashMap<>();
+    protected static final Map<Integer, String> SESSIONS = new HashMap<>();
 
     private final String route;
     private final Method method;
@@ -42,12 +42,12 @@ public abstract class Page {
     protected abstract Object execute(Request request, Response response, Model.Builder builder);
 
     protected boolean isAuthorised(Session session) {
-        if (!session.attributes().contains("email") || !session.attributes().contains("token")) {
+        if (!session.attributes().contains("id") || !session.attributes().contains("email") || !session.attributes().contains("token")) {
             return false;
         }
-        String email = session.attribute("email");
+        int id = session.attribute("id");
         String token = session.attribute("token");
-        return SESSIONS.containsKey(email) && SESSIONS.get(email).equals(token);
+        return SESSIONS.containsKey(id) && SESSIONS.get(id).equals(token);
     }
 
     public String getRoute() {

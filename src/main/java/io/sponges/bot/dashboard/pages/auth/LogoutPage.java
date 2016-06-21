@@ -15,8 +15,9 @@ public class LogoutPage extends Page {
     @Override
     protected Object execute(Request request, Response response, Model.Builder builder) {
         Session session = request.session();
-        String email = session.attribute("email");
-        SESSIONS.remove(email);
+        int id = session.attribute("id");
+        SESSIONS.remove(id);
+        session.removeAttribute("id");
         session.removeAttribute("email");
         session.removeAttribute("token");
         session.attribute("alert", "Logged out!");

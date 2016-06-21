@@ -3,11 +3,18 @@ $(document).ready(function() {
 	var currentPage = $("#current_page").html();
 	processAlert(data);
 
+	// temp shit
 	if (currentPage == "home") {
-		var element = $("#login_button");
-		element.text("Logout");
-		element.attr("href", "/logout");
-	}
+        {
+            var element = $("#login_button");
+            element.text("Logout");
+            element.attr("href", "/logout");
+        }
+        {
+            var element = $("#account_button");
+            element.show();
+        }
+    }
 });
 
 function processAlert(data) {

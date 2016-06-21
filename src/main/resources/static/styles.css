@@ -1,3 +1,11 @@
+* {
+    margin: 0;
+}
+
+body {
+    font-family: "Trebuchet MS", Helvetica, sans-serif;
+}
+
 #internal_data {
     display: none;
 }
@@ -11,4 +19,23 @@
     background-color: orange;
     border: 2px solid darkorange;
     padding: 7px;
+    margin-bottom: 30px;
+}
+
+#account_button {
+    display: none;
+}
+
+.header {
+    width: 100%;
+    background-color: black;
+    color: white;
+    padding: 50px 0 50px 0;
+    text-align: center;
+    font-size: 50px;
+    letter-spacing: 10px;
+}
+
+.content {
+    margin: 50px 50px 50px 50px;
 }

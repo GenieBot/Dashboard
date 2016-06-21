@@ -2,6 +2,8 @@ package io.sponges.bot.dashboard;
 
 import freemarker.template.Configuration;
 import io.sponges.bot.dashboard.pages.IndexPage;
+import io.sponges.bot.dashboard.pages.account.AccountPage;
+import io.sponges.bot.dashboard.pages.account.ChangePasswordPage;
 import io.sponges.bot.dashboard.pages.auth.*;
 import spark.*;
 import spark.template.freemarker.FreeMarkerEngine;
@@ -33,7 +35,11 @@ public class Routes {
                 new RegisterPage(),
                 new LogoutPage(),
                 new ConfirmLoginPage(database),
-                new ConfirmRegisterPage(database)
+                new ConfirmRegisterPage(database),
+
+                // account
+                new AccountPage(),
+                new ChangePasswordPage(database)
         );
     }
 

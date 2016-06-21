@@ -197,6 +197,26 @@ public class Database {
         });
     }
 
+    public void updateUserValue(int id, String column, String value) {
+        updateUserValue(id, column, value, null);
+    }
+
+    public void updateUserValue(int id, String column, String value, Runnable runnable) {
+        executorService.submit(() -> {
+            try (Connection connection = dataSource.getConnection()) {
+                String statementContent = "UPDATE " + USERS_TABLE + " SET " + column + "=? WHERE id=?";
+                PreparedStatement statement = connection.prepareStatement(statementContent);
+                statement.setString(1, value);
+                statement.setInt(2, id);
+                statement.execute();
+                statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            if (runnable != null) runnable.run();
+        });
+    }
+
     public HikariDataSource getDataSource() {
         return dataSource;
     }

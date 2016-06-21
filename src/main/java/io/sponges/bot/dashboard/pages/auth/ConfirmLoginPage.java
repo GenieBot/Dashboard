@@ -33,14 +33,15 @@ public class ConfirmLoginPage extends Page {
         String hashed = database.hash(storedSalt + password);
         if (hashed.equals(storedPassword)) {
             request.session().attribute("alert", "Logged in!");
-            request.session().attribute("email", email);
+            session.attribute("id", userId);
+            session.attribute("email", email);
             String token = database.hash(email + password);
-            SESSIONS.put(email, token);
-            request.session().attribute("token", token);
+            SESSIONS.put(userId, token);
+            session.attribute("token", token);
             response.redirect("/");
             return null;
         }
-        request.session().attribute("alert", "Not logged in!");
+        session.attribute("alert", "Not logged in!");
         response.redirect("/login");
         return null;
     }

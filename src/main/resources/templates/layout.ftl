@@ -8,8 +8,11 @@
 <div id="internal_data">${internal_data}</div>
 <div id="current_page">${page_name}</div>
 <body>
-	<div class="alert"></div>
-	<#nested/>
+	<div class="header">THE GENIE</div>
+	<div class="content">
+        <div class="alert"></div>
+		<#nested/>
+	</div>
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 	<script src="internal.js"></script>
 </body>
