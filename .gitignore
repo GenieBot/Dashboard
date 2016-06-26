@@ -2,3 +2,7 @@
 *.iml
 target
 out
+bootstrap*
+glyphicons*
+npm*
+old*
