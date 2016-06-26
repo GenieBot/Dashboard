@@ -21,7 +21,6 @@ function processAlert(data) {
 	if (!data.hasOwnProperty("alert")) {
 		return;
 	}
-	var element = $(".alert");
-	element.text(data.alert);
-	element.show();
+	$("#alert").show();
+	$("#alert-content").text(data.alert);
 }

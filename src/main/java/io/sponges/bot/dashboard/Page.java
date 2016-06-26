@@ -31,11 +31,13 @@ public abstract class Page {
             builder.data(alertKey, alert);
             session.removeAttribute(alertKey);
         }
-        if (auth && !isAuthorised(session)) {
+        boolean authorised = isAuthorised(session);
+        if (auth && !authorised) {
             session.attribute(alertKey, "You must be logged in to do that!");
             response.redirect("/login");
             return null;
         }
+        builder.with("logged_in", authorised);
         return execute(request, response, builder);
     }
 
