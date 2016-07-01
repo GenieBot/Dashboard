@@ -9,7 +9,7 @@ import spark.Response;
 public class IndexPage extends Page {
 
     public IndexPage() {
-        super("/", Method.GET, true, true);
+        super("/", Method.GET, true, false);
     }
 
     @Override

@@ -10,14 +10,14 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-                <li class="active"><a href="#">Home</a></li>
-                <li><a href="/about">About</a></li>
-                <li><a href="#">Contact</a></li>
+                <li id="home_tab"><a href="/">Home</a></li>
+                <li id="about_tab"><a href="/about">About</a></li>
+                <li id="support_tab"><a href="/support">Support</a></li>
+                <li id="donate_tab"><a href="/donate">Donate</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                <li class="active"><a href="./">Default <span class="sr-only">(current)</span></a></li>
-                <li><a href="../navbar-static-top/">Static top</a></li>
 	            <#if logged_in>
+                    <li id="platforms_tab"><a href="/platforms">Platforms</a></li>
 		            <#include "account_tab.ftl">
 	            <#else>
 		            <#include "login_tab.ftl">

@@ -19,6 +19,6 @@ public class LoginPage extends Page {
             response.redirect("/");
             return null;
         }
-        return new ModelAndView(builder.build(), "login.ftl");
+        return new ModelAndView(builder.build(), "auth/login.ftl");
     }
 }

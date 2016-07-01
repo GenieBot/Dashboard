@@ -1,5 +1,5 @@
-<#import "layout.ftl" as layout>
-<@layout.main "Account" "account">
+<#import "../layout.ftl" as layout>
+<@layout.main title="Account" page_name="account" pagination={"home": "/", "account": "/account"}>
 <h2>Account pls</h2>
 <p>Your id: ${user_id}</p>
 <p>Your email: ${user_email}</p>

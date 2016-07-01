@@ -34,6 +34,11 @@ public abstract class Page {
         boolean authorised = isAuthorised(session);
         if (auth && !authorised) {
             session.attribute(alertKey, "You must be logged in to do that!");
+            String uri = request.uri();
+            if (request.queryParams().size() > 0) {
+                uri += "?" + request.queryString();
+            }
+            session.attribute("requested-url", uri);
             response.redirect("/login");
             return null;
         }

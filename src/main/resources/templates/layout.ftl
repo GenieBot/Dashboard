@@ -1,4 +1,4 @@
-<#macro main title="Default" page_name="Default">
+<#macro main title="Default" page_name="Default" pagination={"none": ""}>
 <!DOCTYPE html>
 <#include "triggering.ftl">
 <html lang="en">
@@ -14,6 +14,8 @@
 	<!-- style shit -->
     <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="css/styles.css">
+	<!-- i'm so fucking lazy -->
+	<link rel="stylesheet" type="text/css" href="http://fontawesome.io/assets/font-awesome/css/font-awesome.css">
 </head>
 <body>
 	<!-- internal shit -->
@@ -22,14 +24,17 @@
 
 	<!-- content shit -->
 	<div class="container">
+		<!-- alert -->
+		<#include "alert.ftl">
+
 		<!-- header -->
 		<div class="header">
 			The Genie
 		</div>
 
-		<!-- navbar & alerts -->
-		<#include "navbar.ftl">
-		<#include "alert.ftl">
+		<!-- navbar & pagination -->
+		<#include "nav/navbar.ftl">
+		<#include "pagination.ftl">
 
 		<!-- start of actual content -->
 		<#nested/>
@@ -38,7 +43,7 @@
 
 	<!-- script shit -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
 	<script src="js/internal.js"></script>
 </body>
 </html>

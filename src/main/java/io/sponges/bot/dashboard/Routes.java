@@ -1,10 +1,17 @@
 package io.sponges.bot.dashboard;
 
 import freemarker.template.Configuration;
+import io.sponges.bot.dashboard.entity.ConfigurationLoader;
 import io.sponges.bot.dashboard.pages.IndexPage;
 import io.sponges.bot.dashboard.pages.account.AccountPage;
 import io.sponges.bot.dashboard.pages.account.ChangePasswordPage;
 import io.sponges.bot.dashboard.pages.auth.*;
+import io.sponges.bot.dashboard.pages.discord.DiscordEndpointPage;
+import io.sponges.bot.dashboard.pages.networks.NetworksPage;
+import io.sponges.bot.dashboard.pages.platform.AddPlatformPage;
+import io.sponges.bot.dashboard.pages.platform.ConfirmAddPlatformPage;
+import io.sponges.bot.dashboard.pages.platform.DeletePlatformPage;
+import io.sponges.bot.dashboard.pages.platform.PlatformsPage;
 import spark.*;
 import spark.template.freemarker.FreeMarkerEngine;
 
@@ -17,7 +24,10 @@ public class Routes {
     private final Service service;
     private final TemplateEngine engine;
 
+    @SuppressWarnings("ConstantConditions")
     public Routes(Database database) throws IOException {
+        ConfigurationLoader.Configuration config = ConfigurationLoader.load(new File("config.json"));
+
         this.service = Service.ignite();
         this.service.port(4567);
         this.service.staticFileLocation("static");
@@ -39,8 +49,25 @@ public class Routes {
 
                 // account
                 new AccountPage(),
-                new ChangePasswordPage(database)
+                new ChangePasswordPage(database),
+
+                // platforms
+                new PlatformsPage(database),
+                new AddPlatformPage(config),
+                new ConfirmAddPlatformPage(database),
+                new DeletePlatformPage(database),
+
+                // discord
+                new DiscordEndpointPage(config, database),
+
+                // networks
+                new NetworksPage(database)
         );
+
+        this.service.get("/home", (request, response) -> {
+            response.redirect("/");
+            return null;
+        });
     }
 
     private void register(Page... pages) {

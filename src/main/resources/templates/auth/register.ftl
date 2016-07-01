@@ -1,5 +1,5 @@
-<#import "layout.ftl" as layout>
-<@layout.main "Register" "register">
+<#import "../layout.ftl" as layout>
+<@layout.main title="Register" page_name="register" pagination={"home": "/", "register": "/register"}>
 <p>Register pls</p>
 <form action="/confirm_register" method="post">
 	Email: <input type="text" name="email"><br>

@@ -18,6 +18,7 @@ public class Database {
 
     private static final SecureRandom RANDOM = new SecureRandom();
     private static final String USERS_TABLE = "users";
+    private static final String PLATFORMS_TABLE = "platforms";
 
     private final HikariDataSource dataSource;
     private final ExecutorService executorService;
@@ -35,7 +36,9 @@ public class Database {
         this.executorService = Executors.newFixedThreadPool(10);
 
         Main.getLogger().info("Creating table " + USERS_TABLE + " if not exists!");
-        createTable();
+        createUsersTable();
+        Main.getLogger().info("Creating table " + PLATFORMS_TABLE + " if not exists!");
+        createPlatformsTable();
     }
 
     public String hash(String input) {
@@ -62,11 +65,13 @@ public class Database {
         return salt;
     }
 
-    private void createTable() {
-        createTable(null);
+    // users table shit
+
+    private void createUsersTable() {
+        createUsersTable(null);
     }
 
-    private void createTable(Runnable runnable) {
+    private void createUsersTable(Runnable runnable) {
         executorService.submit(() -> {
             try (Connection connection = dataSource.getConnection()) {
                 String statementContent = "CREATE TABLE IF NOT EXISTS " + USERS_TABLE + " (id int NOT NULL AUTO_INCREMENT PRIMARY KEY, email VARCHAR(254) NOT NULL, password CHAR(64) NOT NULL, salt CHAR(16) NOT NULL);";
@@ -216,6 +221,168 @@ public class Database {
             if (runnable != null) runnable.run();
         });
     }
+
+    // platforms table shit
+
+    private void createPlatformsTable() {
+        createPlatformsTable(null);
+    }
+
+    // CREATE TABLE IF NOT EXISTS platforms (id int NOT NULL PRIMARY KEY, skype VARCHAR(255), discord VARCHAR(255));
+    private void createPlatformsTable(Runnable runnable) {
+        executorService.submit(() -> {
+            try (Connection connection = dataSource.getConnection()) {
+                String statementContent = "CREATE TABLE IF NOT EXISTS " + PLATFORMS_TABLE + " (id int NOT NULL PRIMARY KEY, skype VARCHAR(255), discord VARCHAR(255));";
+                PreparedStatement statement = connection.prepareStatement(statementContent);
+                statement.execute();
+                statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            if (runnable != null) runnable.run();
+        });
+    }
+
+    // INSERT INTO platforms (id, skype, discord) VALUES (1, "memes", 1331333113)
+    public void createUserPlatform(int id, String skype, String discord) {
+        createUserPlatform(id, skype, discord, null);
+    }
+
+    public void createUserPlatform(int id, String skype, String discord, Runnable runnable) {
+        executorService.submit(() -> {
+            try (Connection connection = dataSource.getConnection()) {
+                String statementContent = "INSERT INTO " + PLATFORMS_TABLE + " (id, skype, discord) VALUES (?, ?, ?);";
+                PreparedStatement statement = connection.prepareStatement(statementContent);
+                statement.setInt(1, id);
+                statement.setString(2, skype);
+                statement.setString(3, discord);
+                statement.execute();
+                statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            if (runnable != null) runnable.run();
+        });
+    }
+
+    public void createUserPlatformSync(int id, String skype, String discord) {
+        try (Connection connection = dataSource.getConnection()) {
+            String statementContent = "INSERT INTO " + PLATFORMS_TABLE + " (id, skype, discord) VALUES (?, ?, ?);";
+            PreparedStatement statement = connection.prepareStatement(statementContent);
+            statement.setInt(1, id);
+            statement.setString(2, skype);
+            statement.setString(3, discord);
+            statement.execute();
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // SELECT * FROM platforms WHERE id=1
+    public boolean isUserPlatformSync(int id) {
+        try (Connection connection = dataSource.getConnection()) {
+            String statementContent = "SELECT * FROM " + PLATFORMS_TABLE + " WHERE id=?";
+            PreparedStatement statement = connection.prepareStatement(statementContent);
+            statement.setInt(1, id);
+            ResultSet results = statement.executeQuery();
+            boolean result = results.isBeforeFirst();
+            statement.close();
+            return result;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public void isUserPlatform(int id, Consumer<Boolean> callback) {
+        executorService.submit(() -> {
+            try (Connection connection = dataSource.getConnection()) {
+                String statementContent = "SELECT * FROM " + PLATFORMS_TABLE + " WHERE id=?";
+                PreparedStatement statement = connection.prepareStatement(statementContent);
+                statement.setInt(1, id);
+                ResultSet results = statement.executeQuery();
+                callback.accept(results.isBeforeFirst());
+                statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    public boolean hasUserPlatformColumnSync(int id, String column) {
+        try (Connection connection = dataSource.getConnection()) {
+            String statementContent = "SELECT " + column + " FROM " + PLATFORMS_TABLE + " WHERE id=?";
+            PreparedStatement statement = connection.prepareStatement(statementContent);
+            statement.setInt(1, id);
+            ResultSet results = statement.executeQuery();
+            boolean result = results.isBeforeFirst();
+            statement.close();
+            return result;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    // SELECT skype FROM platforms WHERE id=1
+
+    public String getUserPlatformValueSync(int id, String column) {
+        try (Connection connection = dataSource.getConnection()) {
+            String statementContent = "SELECT " + column + " FROM " + PLATFORMS_TABLE + " WHERE id=?";
+            PreparedStatement statement = connection.prepareStatement(statementContent);
+            statement.setInt(1, id);
+            ResultSet results = statement.executeQuery();
+            results.next();
+            String response = results.getString(column);
+            statement.close();
+            return response;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public void getUserPlatformValue(int id, String column, Consumer<String> callback) {
+        executorService.submit(() -> {
+            try (Connection connection = dataSource.getConnection()) {
+                String statementContent = "SELECT " + column + " FROM " + PLATFORMS_TABLE + " WHERE id=?";
+                PreparedStatement statement = connection.prepareStatement(statementContent);
+                statement.setInt(1, id);
+                ResultSet results = statement.executeQuery();
+                results.next();
+                String response = results.getString(column);
+                callback.accept(response);
+                statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    // UPDATE platforms SET skype="memes2" WHERE id=1
+
+    public void updateUserPlatformValue(int id, String column, String value) {
+        updateUserPlatformValue(id, column, value, null);
+    }
+
+    public void updateUserPlatformValue(int id, String column, String value, Runnable runnable) {
+        executorService.submit(() -> {
+            try (Connection connection = dataSource.getConnection()) {
+                String statementContent = "UPDATE " + PLATFORMS_TABLE + " SET " + column + "=? WHERE id=?";
+                PreparedStatement statement = connection.prepareStatement(statementContent);
+                statement.setString(1, value);
+                statement.setInt(2, id);
+                statement.execute();
+                statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            if (runnable != null) runnable.run();
+        });
+    }
+
+    // todo adding columns
 
     public HikariDataSource getDataSource() {
         return dataSource;

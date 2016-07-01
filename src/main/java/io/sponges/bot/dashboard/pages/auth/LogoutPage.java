@@ -21,7 +21,7 @@ public class LogoutPage extends Page {
         session.removeAttribute("email");
         session.removeAttribute("token");
         session.attribute("alert", "Logged out!");
-        response.redirect("/login");
+        response.redirect("/");
         return null;
     }
 }

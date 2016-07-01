@@ -23,6 +23,10 @@
     font-weight: bold;
 }
 
+a:hover {
+    text-decoration: none;
+}
+
 /* jewed from bootstrap's navbar example */
 body {
     padding-top: 20px;

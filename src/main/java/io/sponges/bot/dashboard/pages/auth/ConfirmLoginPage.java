@@ -38,7 +38,14 @@ public class ConfirmLoginPage extends Page {
             String token = database.hash(email + password);
             SESSIONS.put(userId, token);
             session.attribute("token", token);
-            response.redirect("/");
+            String redirect;
+            if (session.attributes().contains("requested-url")) {
+                redirect = session.attribute("requested-url");
+                session.removeAttribute("requested-url");
+            } else {
+                redirect = "/";
+            }
+            response.redirect(redirect);
             return null;
         }
         session.attribute("alert", "Not logged in!");

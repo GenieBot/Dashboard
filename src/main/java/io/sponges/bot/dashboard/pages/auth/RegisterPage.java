@@ -19,6 +19,6 @@ public class RegisterPage extends Page {
             response.redirect("/");
             return null;
         }
-        return new ModelAndView(builder.build(), "register.ftl");
+        return new ModelAndView(builder.build(), "auth/register.ftl");
     }
 }

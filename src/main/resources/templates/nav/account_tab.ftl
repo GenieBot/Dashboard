@@ -3,9 +3,9 @@
         Account <span class="caret"></span>
     </a>
     <ul class="dropdown-menu">
-        <li><a href="/logout">Logout</a></li>
+        <li><a href="/account">Manage account</a></li>
         <li class="divider"></li>
-        <li class="dropdown-header">Nav header</li>
-        <li><a href="#">Something</a></li>
+        <li class="dropdown-header">Actions</li>
+        <li><a href="/logout">Logout</a></li>
     </ul>
 </li>

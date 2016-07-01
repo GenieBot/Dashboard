@@ -20,6 +20,6 @@ public class AccountPage extends Page {
         String email = session.attribute("email");
         builder.with("user_id", userId);
         builder.with("user_email", email);
-        return new ModelAndView(builder.build(), "account.ftl");
+        return new ModelAndView(builder.build(), "account/account.ftl");
     }
 }

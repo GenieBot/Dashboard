@@ -1,5 +1,5 @@
-<#import "layout.ftl" as layout>
-<@layout.main "Login" "login">
+<#import "../layout.ftl" as layout>
+<@layout.main title="Login" page_name="login" pagination={"home": "/", "login": "/login"}>
 <p>Login pls</p>
 <p>Don't have an account? <a href="/register">Register</a> a new account.</p>
 <br />
