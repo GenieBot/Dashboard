@@ -1,5 +1,6 @@
 package io.sponges.bot.dashboard.entity.skype;
 
+import io.sponges.bot.dashboard.network.Network;
 import spark.Session;
 
 public class SkypeAccountImpl implements SkypeAccount {
@@ -13,5 +14,10 @@ public class SkypeAccountImpl implements SkypeAccount {
     @Override
     public Session getSession() {
         return session;
+    }
+
+    @Override
+    public Network[] getNetworks() {
+        return null; // TODO
     }
 }

@@ -11,7 +11,6 @@
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
                 <li id="home_tab"><a href="/">Home</a></li>
-                <li id="about_tab"><a href="/about">About</a></li>
                 <li id="support_tab"><a href="/support">Support</a></li>
                 <li id="donate_tab"><a href="/donate">Donate</a></li>
             </ul>

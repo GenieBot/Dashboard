@@ -10,7 +10,7 @@ public final class ConfigurationLoader {
             .put("discord", new JSONObject()
                             .put("client_id", "")
                             .put("client_secret", "")
-            );
+            ).put("recaptcha_secret", "");
 
     public static Configuration load(File file) {
         if (!file.exists()) {

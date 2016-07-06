@@ -3,6 +3,8 @@ package io.sponges.bot.dashboard.entity.discord;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.mashape.unirest.request.HttpRequest;
 import io.sponges.bot.dashboard.entity.Account;
+import io.sponges.bot.dashboard.network.Network;
+import io.sponges.bot.dashboard.network.NetworkFactory;
 
 public interface DiscordAccount extends Account {
 
@@ -38,5 +40,24 @@ public interface DiscordAccount extends Account {
     }
 
     void refreshToken();
+
+    default Network[] getNetworks() {
+        DiscordGuild[] guilds;
+        try {
+            guilds = getGuilds();
+        } catch (UnirestException e) {
+            e.printStackTrace();
+            return null;
+        }
+        Network[] networks = new Network[guilds.length];
+        for (int i = 0; i < guilds.length; i++) {
+            networks[i] = NetworkFactory.create(guilds[i]);
+        }
+        return networks;
+    }
+
+    default String getPlatform() {
+        return "discord";
+    }
 
 }

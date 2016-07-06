@@ -2,6 +2,7 @@ package io.sponges.bot.dashboard.entity.discord;
 
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import io.sponges.bot.dashboard.Database;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import spark.Session;
@@ -10,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 
 public class DiscordAccountImpl implements DiscordAccount {
 
+    private final Database database;
     private final Session session;
     private final String clientId;
     private final String clientSecret;
@@ -18,7 +20,8 @@ public class DiscordAccountImpl implements DiscordAccount {
     private int expiryTime;
     private int startTime;
 
-    public DiscordAccountImpl(Session session, String clientId, String clientSecret, String token, String refreshToken, int expiryTime, int startTime) {
+    public DiscordAccountImpl(Database database, Session session, String clientId, String clientSecret, String token, String refreshToken, int expiryTime, int startTime) {
+        this.database = database;
         this.session = session;
         this.clientId = clientId;
         this.clientSecret = clientSecret;
@@ -116,5 +119,6 @@ public class DiscordAccountImpl implements DiscordAccount {
         this.refreshToken = object.getString("refresh_token");
         this.expiryTime = object.getInt("expires_in");
         this.startTime = (int) TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
+        database.updateUserPlatformValue(session.attribute("id"), "discord", refreshToken);
     }
 }

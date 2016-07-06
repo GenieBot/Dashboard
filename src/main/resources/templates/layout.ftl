@@ -1,4 +1,4 @@
-<#macro main title="Default" page_name="Default" pagination={"none": ""}>
+<#macro main title="Default" page_name="Default" pagination={"none": ""} captcha=false>
 <!DOCTYPE html>
 <#include "triggering.ftl">
 <html lang="en">
@@ -16,6 +16,11 @@
     <link rel="stylesheet" type="text/css" href="css/styles.css">
 	<!-- i'm so fucking lazy -->
 	<link rel="stylesheet" type="text/css" href="http://fontawesome.io/assets/font-awesome/css/font-awesome.css">
+
+	<#if captcha>
+        <!-- recaptcha shit -->
+        <script src='https://www.google.com/recaptcha/api.js'></script>
+	</#if>
 </head>
 <body>
 	<!-- internal shit -->
