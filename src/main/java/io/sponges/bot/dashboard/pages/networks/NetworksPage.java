@@ -5,6 +5,12 @@ import io.sponges.bot.dashboard.Model;
 import io.sponges.bot.dashboard.Page;
 import io.sponges.bot.dashboard.Routes;
 import io.sponges.bot.dashboard.entity.Account;
+import io.sponges.bot.dashboard.entity.ConfigurationLoader;
+import io.sponges.bot.dashboard.entity.discord.DiscordAccount;
+import io.sponges.bot.dashboard.entity.discord.DiscordAccountImpl;
+import io.sponges.bot.dashboard.network.Network;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import spark.ModelAndView;
 import spark.Request;
 import spark.Response;
@@ -16,11 +22,13 @@ public class NetworksPage extends Page {
 
     private final Database database;
     private final Routes.AccountManager accountManager;
+    private final ConfigurationLoader.Configuration configuration;
 
-    public NetworksPage(Database database, Routes.AccountManager accountManager) {
+    public NetworksPage(Database database, Routes.AccountManager accountManager, ConfigurationLoader.Configuration configuration) {
         super("/networks", Method.GET, true, true);
         this.database = database;
         this.accountManager = accountManager;
+        this.configuration = configuration;
     }
 
     @Override
@@ -44,18 +52,30 @@ public class NetworksPage extends Page {
         builder.with("platform_user", platformUser);
         Account account = null;
         List<Account> accounts = accountManager.getAccounts(session.id());
-        System.out.println("Size of accounts: " + accounts.size());
-        for (Account account1 : accounts) {
-            account = account1;
+        if (accounts != null && accounts.size() > 0) {
+            for (Account account1 : accounts) {
+                if (account1.getPlatform().equalsIgnoreCase(platform)) {
+                    account = account1;
+                    break;
+                }
+            }
         }
         if (account == null) {
-            session.attribute("alert", "No accounts for that platform?");
-            response.redirect("/platforms");
-            return null;
+            JSONObject discordObject = configuration.getJsonObject().getJSONObject("discord");
+            String clientId = discordObject.getString("client_id");
+            String clientSecret = discordObject.getString("client_secret");
+            DiscordAccount discordAccount = new DiscordAccountImpl(database, session, clientId, clientSecret, "invalid-token", platformUser, 0, 0);
+            discordAccount.refreshToken();
+            accountManager.add(discordAccount);
+            return execute(request, response, builder);
         }
-        // TODO api request shit here
-        //Network[] networks = account.getNetworks();
-        builder.with("networks", "kek");
+        Network[] networks = account.getNetworks();
+        JSONArray json = new JSONArray();
+        for (Network network : networks) {
+            json.put(network.toJson());
+        }
+        builder.data("networks", json);
+        builder.data("platform", platform);
         return new ModelAndView(builder.build(), "network/networks.ftl");
     }
 }

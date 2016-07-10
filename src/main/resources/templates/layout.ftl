@@ -1,6 +1,5 @@
-<#macro main title="Default" page_name="Default" pagination={"none": ""} captcha=false>
+<#macro main title="Default" page_name="Default" pagination={"none": ""} captcha=false advertisements=true>
 <!DOCTYPE html>
-<#include "triggering.ftl">
 <html lang="en">
 <head>
 	<!-- meta shit -->
@@ -16,6 +15,16 @@
     <link rel="stylesheet" type="text/css" href="css/styles.css">
 	<!-- i'm so fucking lazy -->
 	<link rel="stylesheet" type="text/css" href="http://fontawesome.io/assets/font-awesome/css/font-awesome.css">
+
+	<#if advertisements>
+		<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+		<script>
+			(adsbygoogle = window.adsbygoogle || []).push({
+			google_ad_client: "ca-pub-6568927978510442",
+			enable_page_level_ads: true
+			});
+		</script>
+	</#if>
 
 	<#if captcha>
         <!-- recaptcha shit -->
@@ -33,17 +42,39 @@
 		<#include "alert.ftl">
 
 		<!-- header -->
-		<div class="header">
-			The Genie
-		</div>
+        <div class="header">
+            The Genie
+        </div>
 
 		<!-- navbar & pagination -->
 		<#include "nav/navbar.ftl">
 		<#include "pagination.ftl">
 
 		<!-- start of actual content -->
-		<#nested/>
+		<#nested />
 		<!-- end of actual content -->
+
+		<!-- advertisement -->
+		<#if advertisements>
+            <hr />
+            <center>
+				<ins class="adsbygoogle"
+	                 style="display:block"
+	                 data-ad-client="ca-pub-6568927978510442"
+	                 data-ad-slot="3998604482"
+	                 data-ad-format="auto">
+	            </ins>
+	            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+				<br />
+				<span style="color: #5c5c5c">
+					Don't like advertisements? <a href="/donate">Donors</a> get an ad-free experience!
+				</span>
+            </center>
+		</#if>
+
+		<!-- footer -->
+		<hr />
+		<p style="text-align: center;">Copyright &copy; ${.now?string.yyyy} sponges.io</p>
 	</div>
 
 	<!-- script shit -->

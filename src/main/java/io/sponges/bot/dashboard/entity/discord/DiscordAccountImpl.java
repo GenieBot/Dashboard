@@ -3,13 +3,18 @@ package io.sponges.bot.dashboard.entity.discord;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import io.sponges.bot.dashboard.Database;
+import io.sponges.bot.dashboard.network.Network;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import spark.Session;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class DiscordAccountImpl implements DiscordAccount {
+
+    private final Map<String, Network> networkCache = new HashMap<>();
 
     private final Database database;
     private final Session session;
@@ -34,6 +39,19 @@ public class DiscordAccountImpl implements DiscordAccount {
     @Override
     public Session getSession() {
         return session;
+    }
+
+    @Override
+    public Map<String, Network> getNetworkCache() {
+        return networkCache;
+    }
+
+    @Override
+    public void updateNetworkCache(Network[] networks) {
+        networkCache.clear();
+        for (Network network : networks) {
+            networkCache.put(network.getId(), network);
+        }
     }
 
     @Override
@@ -82,7 +100,10 @@ public class DiscordAccountImpl implements DiscordAccount {
             JSONObject jsonGuild = array.getJSONObject(i);
             String id = jsonGuild.getString("id");
             String name = jsonGuild.getString("name");
-            String icon = jsonGuild.getString("icon");
+            String icon = null;
+            if (!jsonGuild.isNull("icon")) {
+                icon = jsonGuild.getString("icon");
+            }
             boolean owner = jsonGuild.getBoolean("owner");
             long permissions = jsonGuild.getLong("permissions");
             DiscordGuild guild = new DiscordGuild(id, name, icon, owner, permissions);

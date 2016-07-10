@@ -10,6 +10,8 @@ import io.sponges.bot.dashboard.pages.account.AccountPage;
 import io.sponges.bot.dashboard.pages.account.ChangePasswordPage;
 import io.sponges.bot.dashboard.pages.auth.*;
 import io.sponges.bot.dashboard.pages.discord.DiscordEndpointPage;
+import io.sponges.bot.dashboard.pages.networks.ManageModulePage;
+import io.sponges.bot.dashboard.pages.networks.ManageNetworkPage;
 import io.sponges.bot.dashboard.pages.networks.NetworksPage;
 import io.sponges.bot.dashboard.pages.platform.AddPlatformPage;
 import io.sponges.bot.dashboard.pages.platform.ConfirmAddPlatformPage;
@@ -42,6 +44,9 @@ public class Routes {
         this.service.port(4567);
         this.service.staticFileLocation("static");
         this.service.staticFiles.expireTime(600);
+        this.service.exception(Exception.class, (exception, request, response) -> {
+            exception.printStackTrace();
+        });
         
         Configuration config = new Configuration();
         config.setDirectoryForTemplateLoading(new File("src/main/resources/templates"));
@@ -56,7 +61,7 @@ public class Routes {
                 // auth
                 new LoginPage(),
                 new RegisterPage(),
-                new LogoutPage(),
+                new LogoutPage(accountManager),
                 new ConfirmLoginPage(database, configuration),
                 new ConfirmRegisterPage(database, configuration),
 
@@ -74,7 +79,9 @@ public class Routes {
                 new DiscordEndpointPage(configuration, database, accountManager),
 
                 // networks
-                new NetworksPage(database, accountManager)
+                new NetworksPage(database, accountManager, configuration),
+                new ManageNetworkPage(accountManager),
+                new ManageModulePage(accountManager)
         );
 
         this.service.get("/home", (request, response) -> {

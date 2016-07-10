@@ -3,6 +3,9 @@ $(document).ready(function() {
 	var currentPage = $("#current_page").html();
     navbarTab(currentPage);
 	processAlert(data);
+	if (currentPage === "networks") {
+		processNetworks(data);
+	}
 });
 
 function navbarTab(currentPage) {
@@ -18,4 +21,14 @@ function processAlert(data) {
 	}
 	$("#alert").show();
 	$("#alert-content").text(data.alert);
+}
+
+function processNetworks(data) {
+	var platform = data.platform;
+	var networks = data.networks;
+	var table = $("#networks_table");
+	for (var i = 0; i < networks.length; i++) {
+		var obj = networks[i];
+		table.append("<tr><td>" + obj.name + "</td><td>" + obj.id + "</td><td><a href=\"/manage_network?platform=" + platform + "&network=" + obj.id + "\"><div class=\"btn btn-sm btn-default\">Manage</div></a> <a href=\"/remove_network?platform=" + platform + "&network=" + obj.id + "\"><div class=\"btn btn-sm btn-danger\">Remove</div></a></td></tr>");
+	}
 }

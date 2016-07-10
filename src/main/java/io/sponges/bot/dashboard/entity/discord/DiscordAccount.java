@@ -6,6 +6,9 @@ import io.sponges.bot.dashboard.entity.Account;
 import io.sponges.bot.dashboard.network.Network;
 import io.sponges.bot.dashboard.network.NetworkFactory;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public interface DiscordAccount extends Account {
 
     String REDIRECT_URL = "http%3A%2F%2Flocalhost%3A4567%2Fdiscord_endpoint";
@@ -49,11 +52,14 @@ public interface DiscordAccount extends Account {
             e.printStackTrace();
             return null;
         }
-        Network[] networks = new Network[guilds.length];
-        for (int i = 0; i < guilds.length; i++) {
-            networks[i] = NetworkFactory.create(guilds[i]);
+        List<Network> networks = new ArrayList<>(guilds.length);
+        for (DiscordGuild guild : guilds) {
+            if (!guild.isOwner()) continue;
+            networks.add(NetworkFactory.create(guild));
         }
-        return networks;
+        Network[] array = networks.toArray(new Network[networks.size()]);
+        updateNetworkCache(array);
+        return array;
     }
 
     default String getPlatform() {
