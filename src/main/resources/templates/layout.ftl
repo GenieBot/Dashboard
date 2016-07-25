@@ -1,4 +1,4 @@
-<#macro main title="Default" page_name="Default" pagination={"none": ""} captcha=false advertisements=true>
+<#macro main title="Default" page_name="Default" pagination={"none": ""} captcha=false advertisements=false>
 <!DOCTYPE html>
 <html lang="en">
 <head>

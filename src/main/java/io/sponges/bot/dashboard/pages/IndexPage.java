@@ -14,7 +14,6 @@ public class IndexPage extends Page {
 
     @Override
     protected Object execute(Request request, Response response, Model.Builder builder) {
-        builder.with("name", "Fag lord 03");
         return new ModelAndView(builder.build(), "index.ftl");
     }
 }
