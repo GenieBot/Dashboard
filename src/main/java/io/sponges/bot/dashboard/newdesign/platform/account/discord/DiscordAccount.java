@@ -1,10 +1,10 @@
-package io.sponges.bot.dashboard.entity.discord;
+package io.sponges.bot.dashboard.newdesign.platform.account.discord;
 
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.mashape.unirest.request.HttpRequest;
-import io.sponges.bot.dashboard.entity.Account;
-import io.sponges.bot.dashboard.network.Network;
-import io.sponges.bot.dashboard.network.NetworkImpl;
+import io.sponges.bot.dashboard.newdesign.platform.account.Account;
+import io.sponges.bot.dashboard.newdesign.platform.network.Network;
+import io.sponges.bot.dashboard.newdesign.platform.network.NetworkImpl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +55,7 @@ public interface DiscordAccount extends Account {
         List<Network> networks = new ArrayList<>(guilds.length);
         for (DiscordGuild guild : guilds) {
             if (!guild.isOwner()) continue;
-            networks.add(new NetworkImpl(guild.getName(), guild.getId()));
+            networks.add(new NetworkImpl(guild.getName(), guild.getId(), guild.getIcon()));
         }
         Network[] array = networks.toArray(new Network[networks.size()]);
         updateNetworkCache(array);

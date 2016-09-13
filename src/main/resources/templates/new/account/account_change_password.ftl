@@ -8,20 +8,20 @@ bottom_tabs={
 	"logout": "/account/logout"
 }
 >
-<form action="/auth/login" method="post">
+<form action="/auth/password" method="post">
     <label class="label">Old password</label>
     <p class="control has-icon">
-        <input class="input" type="password" placeholder="Old password">
+        <input class="input" type="password" placeholder="Old password" name="current">
         <i class="fa fa-lock"></i>
     </p>
     <label class="label">New password</label>
     <p class="control has-icon">
-        <input class="input" type="password" placeholder="New password">
+        <input class="input" type="password" placeholder="New password" name="new">
         <i class="fa fa-lock"></i>
     </p>
     <label class="label">Confirm new password</label>
     <p class="control has-icon">
-        <input class="input" type="password" placeholder="New password">
+        <input class="input" type="password" placeholder="New password" name="confirm">
         <i class="fa fa-lock"></i>
     </p>
     <p class="control">

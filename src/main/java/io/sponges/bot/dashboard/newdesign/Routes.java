@@ -1,63 +1,112 @@
 package io.sponges.bot.dashboard.newdesign;
 
 import freemarker.template.Configuration;
+import io.sponges.bot.dashboard.newdesign.pages.IndexPage;
+import io.sponges.bot.dashboard.newdesign.pages.account.*;
+import io.sponges.bot.dashboard.newdesign.pages.auth.AuthChangePasswordPage;
+import io.sponges.bot.dashboard.newdesign.pages.auth.AuthLoginPage;
+import io.sponges.bot.dashboard.newdesign.pages.auth.AuthLogoutPage;
+import io.sponges.bot.dashboard.newdesign.pages.auth.AuthRegisterPage;
+import io.sponges.bot.dashboard.newdesign.pages.dashboard.DashboardNetworkPage;
+import io.sponges.bot.dashboard.newdesign.pages.dashboard.DashboardPlatformPage;
+import io.sponges.bot.dashboard.newdesign.pages.dashboard.DashboardPlatformsPage;
+import io.sponges.bot.dashboard.newdesign.pages.store.StoreFaqPage;
+import io.sponges.bot.dashboard.newdesign.pages.store.StoreIndexPage;
+import io.sponges.bot.dashboard.newdesign.pages.LegalPage;
+import io.sponges.bot.dashboard.newdesign.pages.store.StoreSupportPage;
+import io.sponges.bot.dashboard.newdesign.platform.account.discord.DiscordAccountFactory;
+import io.sponges.bot.dashboard.newdesign.user.UserManager;
+import io.sponges.bot.dashboard.newdesign.user.impl.UserManagerImpl;
 import spark.*;
 import spark.template.freemarker.FreeMarkerEngine;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.lang.reflect.InvocationTargetException;
 
 public class Routes {
 
-    public static void main(String[] args) throws IOException {
-        Service service = Service.ignite();
-        service.port(4567);
-        service.staticFileLocation("static");
-        service.staticFiles.expireTime(600);
+    public static final String RECAPTCHA_URL = "https://www.google.com/recaptcha/api/siteverify";
 
-        service.exception(Exception.class, (exception, request, response) -> {
+    private final Service service;
+    private final TemplateEngine engine;
+    private final UserManager userManager;
+
+    @SuppressWarnings("ConstantConditions")
+    public Routes(Database database) throws IOException {
+        ConfigurationLoader.Configuration configuration = ConfigurationLoader.load(new File("config.json"));
+
+        this.service = Service.ignite();
+        this.service.port(4567);
+        this.service.staticFileLocation("static");
+        this.service.staticFiles.expireTime(600);
+        this.service.exception(Exception.class, (exception, request, response) -> {
             exception.printStackTrace();
         });
-
         Configuration config = new Configuration();
         config.setDirectoryForTemplateLoading(new File("src/main/resources/templates"));
-        TemplateEngine engine = new FreeMarkerEngine(config);
+        this.engine = new FreeMarkerEngine(config);
 
-        final Map emptyMap = new HashMap<>();
+        this.userManager = new UserManagerImpl(database);
 
-        service.get("/", (request, response) -> new ModelAndView(emptyMap, "new/index.ftl"), engine);
+        // registering account factories - added to static map when initialised
+        new DiscordAccountFactory(database, configuration);
 
-        service.redirect.get("/dashboard", "/platforms");
-        service.get("/platforms", (request, response) -> new ModelAndView(emptyMap, "new/dashboard/dashboard_platforms.ftl"), engine);
-        service.get("/platforms/manage", (request, response) -> new ModelAndView(emptyMap, "new/dashboard/dashboard_manage_platforms.ftl"), engine);
-        service.get("/platforms/:platform", (request, response) -> new ModelAndView(new HashMap<String, Object>() {{
-            put("platform", request.params("platform"));
-        }}, "new/dashboard/dashboard_platform.ftl"), engine);
-        service.get("/networks/:network", (request, response) -> new ModelAndView(new HashMap<String, Object>() {{
-            put("network", request.params("network"));
-        }}, "new/dashboard/dashboard_network.ftl"), engine);
+        // registering routes
+        register(
+                new IndexPage(),
 
-        service.get("/store", (request, response) -> new ModelAndView(emptyMap, "new/store/store_index.ftl"), engine);
-        service.get("/store/support", (request, response) -> new ModelAndView(emptyMap, "new/store/store_support.ftl"), engine);
-        service.get("/store/faq", (request, response) -> new ModelAndView(emptyMap, "new/store/store_faq.ftl"), engine);
+                // account
+                new AccountLoginPage(),
+                new AccountRegisterPage(),
+                new AccountLogoutPage(),
+                new AccountOverviewPage(),
+                new AccountChangePasswordPage(),
 
-        service.get("/account", (request, response) -> new ModelAndView(emptyMap, "new/account/account_overview.ftl"), engine);
-        service.redirect.get("/login", "/account/login");
-        service.redirect.get("/logout", "/account/logout");
-        service.redirect.get("/register", "/account/register");
-        service.get("/account/login", (request, response) -> new ModelAndView(emptyMap, "new/account/account_login.ftl"), engine);
-        service.get("/account/logout", (request, response) -> new ModelAndView(emptyMap, "new/account/account_logout.ftl"), engine);
-        service.get("/account/register", (request, response) -> new ModelAndView(emptyMap, "new/account/account_register.ftl"), engine);
-        service.get("/account/password", (request, response) -> new ModelAndView(emptyMap, "new/account/account_change_password.ftl"), engine);
+                // auth
+                new AuthLoginPage(database, configuration),
+                new AuthRegisterPage(database, configuration),
+                new AuthLogoutPage(userManager),
+                new AuthChangePasswordPage(database),
 
-        service.get("/legal", (request, response) -> new ModelAndView(emptyMap, "new/legal.ftl"), engine);
+                // store
+                new StoreIndexPage(),
+                new StoreSupportPage(),
+                new StoreFaqPage(),
+                new LegalPage(),
 
-        service.get("*", (request, response) -> new ModelAndView(new HashMap<String, Object>() {{
-            put("status_code", 404);
-            put("status_message", "Page not found");
-        }}, "new/error.ftl"), engine);
+                // dashboard
+                new DashboardPlatformsPage(),
+                new DashboardPlatformPage(),
+                new DashboardNetworkPage()
+        );
+
+        this.service.redirect.get("/login", "/account/login");
+        this.service.redirect.get("/dashboard", "/platforms");
+    }
+
+    private void register(Page... pages) {
+        for (Page page : pages) {
+            register(page);
+        }
+    }
+
+    public void register(Page page) {
+        Class<? extends Service> clazz = service.getClass();
+        String methodName = page.getMethod().name().toLowerCase();
+        try {
+            if (page.isTemplate()) {
+                clazz.getMethod(methodName, String.class, TemplateViewRoute.class, TemplateEngine.class).invoke(service,
+                        page.getRoute(), (TemplateViewRoute) (request, response) -> (ModelAndView)
+                                page.internalExecute(userManager, request, response, Model.create()), engine);
+            } else {
+                clazz.getMethod(methodName, String.class, Route.class).invoke(service,
+                        page.getRoute(), (Route) (request, response) ->
+                                page.internalExecute(userManager, request, response, Model.create()));
+            }
+        } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 
 }

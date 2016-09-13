@@ -72,7 +72,7 @@ public class NetworksPage extends Page {
         Network[] networks = account.getNetworks();
         JSONArray json = new JSONArray();
         for (Network network : networks) {
-            json.put(network.toJson());
+            //json.put(network.toJson());
         }
         builder.data("networks", json);
         builder.data("platform", platform);

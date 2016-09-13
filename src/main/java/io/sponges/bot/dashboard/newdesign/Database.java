@@ -1,4 +1,4 @@
-package io.sponges.bot.dashboard;
+package io.sponges.bot.dashboard.newdesign;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -317,6 +317,9 @@ public class Database {
             statement.setInt(1, id);
             ResultSet results = statement.executeQuery();
             boolean result = results.isBeforeFirst();
+            if (result && results.next() && results.getObject(column) == null) {
+                return false;
+            }
             statement.close();
             return result;
         } catch (SQLException e) {

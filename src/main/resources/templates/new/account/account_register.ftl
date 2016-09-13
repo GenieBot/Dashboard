@@ -15,20 +15,20 @@ bottom_tabs={
 	                Create a new account
                 </h3>
             </div>
-            <form action="/auth/login" method="post">
+            <form action="/auth/register" method="post">
                 <label class="label">Email</label>
                 <p class="control has-icon">
-                    <input class="input" type="email" placeholder="Email">
+                    <input class="input" type="email" placeholder="Email" name="email">
                     <i class="fa fa-envelope"></i>
                 </p>
                 <label class="label">Password</label>
                 <p class="control has-icon">
-                    <input class="input" type="password" placeholder="Password">
+                    <input class="input" type="password" placeholder="Password" name="password">
                     <i class="fa fa-lock"></i>
                 </p>
                 <label class="label">Confirm password</label>
                 <p class="control has-icon">
-                    <input class="input" type="password" placeholder="Password">
+                    <input class="input" type="password" placeholder="Password" name="confirm_password">
                     <i class="fa fa-lock"></i>
                 </p>
                 <p class="control">

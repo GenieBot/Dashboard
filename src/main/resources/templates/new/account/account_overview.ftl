@@ -8,5 +8,8 @@ bottom_tabs={
 	"logout": "/account/logout"
 }
 >
-meme
+<div class="content">
+	<h4>Your email:</h4>
+	<p>${email}</p>
+</div>
 </@layout.account>

@@ -18,14 +18,15 @@ bottom_tabs={
             <form action="/auth/login" method="post">
                 <label class="label">Email</label>
                 <p class="control has-icon">
-                    <input class="input" type="email" placeholder="Email">
+                    <input class="input" type="email" placeholder="Email" name="email">
                     <i class="fa fa-envelope"></i>
                 </p>
                 <label class="label">Password</label>
                 <p class="control has-icon">
-                    <input class="input" type="password" placeholder="Password">
+                    <input class="input" type="password" placeholder="Password" name="password">
                     <i class="fa fa-lock"></i>
                 </p>
+                <div class="g-recaptcha" data-sitekey="6LcrESQTAAAAAKjka65Dcd8zSUjvlqmt6G0mO_TH"></div>
                 <p class="control">
                     <button type="submit" class="button is-success is-fullwidth">
                         Login
